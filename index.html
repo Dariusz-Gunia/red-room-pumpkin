@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red Room Pumpkin</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #140000; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; font-family: Georgia, "Times New Roman", serif; }
+  #stage { width: 100%; height: 100%; max-width: 100vh; max-height: 125vw; display: block; }
+  #pumpkin { cursor: pointer; outline: none; }
+  #pumpkin:focus-visible .rim { stroke: #fff; stroke-width: 3; }
+  #glow { transition: opacity .25s; }
+  #dark { transition: opacity .5s; pointer-events: none; }
+  #halo { pointer-events: none; }
+  .caption { fill: #f3d9a4; font-size: 15px; letter-spacing: .12em; text-anchor: middle; text-transform: uppercase; transition: opacity .6s; pointer-events: none; }
+  #flash { fill: #ff2a2a; font-size: 17px; font-weight: bold; letter-spacing: .08em; text-anchor: middle; opacity: 0; pointer-events: none; }
+  #sound { cursor: pointer; }
+  #sound text { fill: #f3d9a4; font-size: 18px; text-anchor: middle; }
+  .glitch #scene { animation: glitch .45s steps(2, end); }
+  .glitch #flash { opacity: 1; }
+  .glitch #redshift { opacity: .55; }
+  #redshift { opacity: 0; mix-blend-mode: screen; pointer-events: none; }
+  @keyframes glitch {
+    0%   { transform: translate(0,0);       filter: none; }
+    20%  { transform: translate(-6px,2px);  filter: hue-rotate(-30deg) contrast(1.6); }
+    40%  { transform: translate(7px,-3px);  filter: invert(1) contrast(1.4); }
+    60%  { transform: translate(-3px,4px);  filter: saturate(3); }
+    80%  { transform: translate(4px,-2px);  filter: hue-rotate(40deg); }
+    100% { transform: translate(0,0);       filter: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glitch #scene { animation: none; }
+  }
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Interactive Twin Peaks Red Room jack-o'-lantern">
+  <defs>
+    <linearGradient id="drape" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="44" y2="0" spreadMethod="repeat">
+      <stop offset="0"   stop-color="#2a0000"/>
+      <stop offset=".5"  stop-color="#a80f0f"/>
+      <stop offset="1"   stop-color="#2a0000"/>
+    </linearGradient>
+    <linearGradient id="drapeFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".55"/>
+      <stop offset=".5" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".45"/>
+    </linearGradient>
+    <pattern id="chev" width="60" height="40" patternUnits="userSpaceOnUse" patternTransform="translate(0 340)">
+      <rect width="60" height="40" fill="#f2efe6"/>
+      <path d="M0 0 L30 20 L60 0 L60 20 L30 40 L0 20 Z" fill="#0b0b0b"/>
+    </pattern>
+    <linearGradient id="floorFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="light" cx="50%" cy="50%" r="50%">
+      <stop offset="0"  stop-color="#ffb347" stop-opacity=".75"/>
+      <stop offset="1"  stop-color="#ff7a00" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="skin" cx="40%" cy="35%" r="75%">
+      <stop offset="0" stop-color="#ff9a2e"/>
+      <stop offset="1" stop-color="#c04a05"/>
+    </radialGradient>
+    <filter id="bloom" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="eyeL"><circle cx="156" cy="290" r="27"/></clipPath>
+    <clipPath id="eyeR"><circle cx="244" cy="290" r="27"/></clipPath>
+  </defs>
+
+  <g id="scene">
+    <!-- Red Room -->
+    <rect width="400" height="345" fill="url(#drape)"/>
+    <rect width="400" height="345" fill="url(#drapeFade)"/>
+    <rect y="340" width="400" height="160" fill="url(#chev)"/>
+    <rect y="340" width="400" height="160" fill="url(#floorFade)"/>
+
+    <!-- light cast by the candle -->
+    <ellipse id="halo" cx="200" cy="300" rx="230" ry="210" fill="url(#light)" style="mix-blend-mode:screen"/>
+
+    <!-- shadow -->
+    <ellipse cx="200" cy="432" rx="130" ry="16" fill="#000" opacity=".55"/>
+
+    <!-- pumpkin -->
+    <g id="pumpkin" tabindex="0" role="button" aria-pressed="true" aria-label="Blow out or relight the candle">
+      <ellipse cx="108" cy="320" rx="62" ry="105" fill="#a63e04"/>
+      <ellipse cx="292" cy="320" rx="62" ry="105" fill="#a63e04"/>
+      <ellipse cx="148" cy="320" rx="66" ry="112" fill="#d9600b"/>
+      <ellipse cx="252" cy="320" rx="66" ry="112" fill="#d9600b"/>
+      <ellipse class="rim" cx="200" cy="320" rx="74" ry="118" fill="url(#skin)"/>
+      <path d="M200 205 C196 250 196 390 200 435" stroke="#8a3303" stroke-width="2" fill="none" opacity=".5"/>
+      <path d="M200 205 C188 210 188 185 196 170 C198 160 210 160 212 172 C216 186 212 200 200 205 Z" fill="#4a3a14"/>
+      <path d="M196 172 C200 166 208 166 210 174" stroke="#2b2108" stroke-width="2" fill="none"/>
+      <!-- tendril -->
+      <path d="M212 182 C240 170 255 190 245 202 C238 210 228 200 236 194" stroke="#5c7a1f" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+      <!-- carved face interior (dark when candle is out) -->
+      <g id="carve">
+        <circle cx="156" cy="290" r="27" fill="#1a0800"/>
+        <circle cx="244" cy="290" r="27" fill="#1a0800"/>
+        <polygon points="200,303 186,332 214,332" fill="#1a0800"/>
+        <path d="M128 252 l24 -14 l24 14 M224 252 l24 -14 l24 14" stroke="#1a0800" stroke-width="7" fill="none" stroke-linejoin="miter"/>
+        <path d="M138 362 l16 14 l16 -14 l16 14 l16 -14 l16 14 l16 -14 l16 14 l16 -14" stroke="#1a0800" stroke-width="9" fill="none" stroke-linejoin="miter"/>
+      </g>
+
+      <!-- candlelight inside the carving -->
+      <g id="glow" filter="url(#bloom)">
+        <g clip-path="url(#eyeL)"><circle cx="156" cy="290" r="27" fill="#ffd45a"/><circle id="pupilL" cx="156" cy="290" r="11" fill="#3a1200"/></g>
+        <g clip-path="url(#eyeR)"><circle cx="244" cy="290" r="27" fill="#ffd45a"/><circle id="pupilR" cx="244" cy="290" r="11" fill="#3a1200"/></g>
+        <polygon points="200,303 186,332 214,332" fill="#ffd45a"/>
+        <path d="M128 252 l24 -14 l24 14 M224 252 l24 -14 l24 14" stroke="#ffd45a" stroke-width="7" fill="none" stroke-linejoin="miter"/>
+        <path d="M138 362 l16 14 l16 -14 l16 14 l16 -14 l16 14 l16 -14 l16 14 l16 -14" stroke="#ffd45a" stroke-width="9" fill="none" stroke-linejoin="miter"/>
+      </g>
+    </g>
+
+    <rect id="dark" width="400" height="500" fill="#000" opacity="0"/>
+    <rect id="redshift" width="400" height="500" fill="#ff0000"/>
+    <text id="flash" x="200" y="60">THE OWLS ARE NOT WHAT THEY SEEM</text>
+  </g>
+
+  <text id="hint" class="caption" x="200" y="478">Click the pumpkin</text>
+  <g id="sound" role="button" tabindex="0" aria-label="Toggle humming sound" aria-pressed="false">
+    <circle cx="372" cy="28" r="18" fill="#000" opacity=".5"/>
+    <text id="soundIcon" x="372" y="35">&#9835;</text>
+  </g>
+</svg>
+
+<script>
+(() => {
+  const root   = document.documentElement;
+  const svg    = document.getElementById('stage');
+  const pump   = document.getElementById('pumpkin');
+  const glow   = document.getElementById('glow');
+  const halo   = document.getElementById('halo');
+  const dark   = document.getElementById('dark');
+  const hint   = document.getElementById('hint');
+  const soundB = document.getElementById('sound');
+  const soundI = document.getElementById('soundIcon');
+  const pupils = [
+    { el: document.getElementById('pupilL'), cx: 156, cy: 290 },
+    { el: document.getElementById('pupilR'), cx: 244, cy: 290 },
+  ];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let lit = true, level = 1, soundOn = false, audio = null;
+
+  /* ---- candle flicker ---- */
+  let t = 0;
+  function frame() {
+    const target = lit ? (reduce ? 1 : 0.82 + Math.random() * 0.18) : 0.04;
+    level += (target - level) * 0.25;
+    glow.style.opacity = level;
+    halo.style.opacity = lit ? level * 0.9 : 0;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  function setLit(v) {
+    lit = v;
+    dark.style.opacity = lit ? 0 : 0.6;
+    pump.setAttribute('aria-pressed', String(lit));
+    hint.style.opacity = 0;
+    if (audio) audio.gain.gain.setTargetAtTime(soundOn && lit ? 0.12 : 0, audio.ctx.currentTime, 0.3);
+  }
+  pump.addEventListener('click', () => setLit(!lit));
+  pump.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLit(!lit); }
+  });
+
+  /* ---- eyes follow the pointer ---- */
+  function look(clientX, clientY) {
+    const r = svg.getBoundingClientRect();
+    const scale = Math.min(r.width / 400, r.height / 500);
+    const ox = r.left + (r.width  - 400 * scale) / 2;
+    const oy = r.top  + (r.height - 500 * scale) / 2;
+    const x = (clientX - ox) / scale, y = (clientY - oy) / scale;
+    for (const p of pupils) {
+      const dx = x - p.cx, dy = y - p.cy;
+      const d = Math.hypot(dx, dy) || 1;
+      const m = Math.min(11, d / 12);
+      p.el.setAttribute('cx', p.cx + dx / d * m);
+      p.el.setAttribute('cy', p.cy + dy / d * m);
+    }
+  }
+  addEventListener('pointermove', e => look(e.clientX, e.clientY));
+
+  /* ---- Red Room glitch ---- */
+  let glitching = false;
+  function glitch() {
+    if (glitching || reduce) return;
+    glitching = true;
+    root.classList.add('glitch');
+    if (audio && soundOn) {
+      const o = audio.ctx.createOscillator(), g = audio.ctx.createGain();
+      o.type = 'sawtooth'; o.frequency.value = 90;
+      g.gain.value = 0.08;
+      o.connect(g).connect(audio.ctx.destination);
+      o.frequency.exponentialRampToValueAtTime(30, audio.ctx.currentTime + 0.4);
+      o.start(); o.stop(audio.ctx.currentTime + 0.4);
+    }
+    setTimeout(() => { root.classList.remove('glitch'); glitching = false; }, 450);
+  }
+  pump.addEventListener('pointerenter', glitch);
+  (function schedule() {
+    setTimeout(() => { if (lit) glitch(); schedule(); }, 7000 + Math.random() * 9000);
+  })();
+
+  /* ---- optional low hum (starts only on user click) ---- */
+  function toggleSound() {
+    soundOn = !soundOn;
+    soundB.setAttribute('aria-pressed', String(soundOn));
+    soundI.textContent = soundOn ? '♫' : '♪';
+    soundB.style.opacity = soundOn ? 1 : 0.7;
+    if (soundOn && !audio) {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const gain = ctx.createGain(); gain.gain.value = 0;
+      [55, 55.6, 110.3].forEach((f, i) => {
+        const o = ctx.createOscillator(); o.type = i === 2 ? 'triangle' : 'sine';
+        o.frequency.value = f; o.connect(gain); o.start();
+      });
+      gain.connect(ctx.destination);
+      audio = { ctx, gain };
+    }
+    if (audio) {
+      if (audio.ctx.state === 'suspended') audio.ctx.resume();
+      audio.gain.gain.setTargetAtTime(soundOn && lit ? 0.12 : 0, audio.ctx.currentTime, 0.3);
+    }
+  }
+  soundB.addEventListener('click', toggleSound);
+  soundB.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSound(); }
+  });
+  soundB.style.opacity = 0.7;
+})();
+</script>
+</body>
+</html>
