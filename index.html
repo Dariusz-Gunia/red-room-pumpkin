@@ -143,6 +143,10 @@
     <rect id="hintBox" class="pulse" x="70" y="452" width="260" height="36" rx="18" fill="#000" fill-opacity=".85" stroke="#e8453c" stroke-width="2"/>
     <text id="hintText" x="200" y="476" style="fill:#fff;font-size:17px;font-weight:bold;letter-spacing:.1em;text-anchor:middle;text-transform:uppercase">Click the pumpkin</text>
   </g>
+  <g id="musicHint" style="transition:opacity .6s;pointer-events:none">
+    <rect id="musicBox" class="pulse" x="80" y="14" width="240" height="32" rx="16" fill="#000" fill-opacity=".85" stroke="#e8453c" stroke-width="2"/>
+    <text id="musicText" x="200" y="36" style="fill:#fff;font-size:15px;font-weight:bold;letter-spacing:.1em;text-anchor:middle;text-transform:uppercase">&#9835; Click for music</text>
+  </g>
   <g id="sound" role="button" tabindex="0" aria-label="Toggle humming sound" aria-pressed="false">
     <circle cx="372" cy="28" r="18" fill="#000" opacity=".5"/>
     <text id="soundIcon" x="372" y="35">&#9835;</text>
@@ -172,13 +176,15 @@
 
   /* size the hint pill to its text, whatever font the visitor's system uses */
   function fitHint() {
-    try {
-      const b = document.getElementById('hintText').getBBox(), box = document.getElementById('hintBox');
-      if (!b.width) return;
-      const w = Math.min(380, b.width + 40);
-      box.setAttribute('width', w);
-      box.setAttribute('x', 200 - w / 2);
-    } catch (e) {}
+    for (const [t, bx] of [['hintText', 'hintBox'], ['musicText', 'musicBox']]) {
+      try {
+        const b = document.getElementById(t).getBBox(), box = document.getElementById(bx);
+        if (!b.width) continue;
+        const w = Math.min(300, b.width + 40);
+        box.setAttribute('width', w);
+        box.setAttribute('x', 200 - w / 2);
+      } catch (e) {}
+    }
   }
   fitHint();
   addEventListener('load', fitHint);
@@ -356,7 +362,12 @@
   soundB.setAttribute('aria-pressed', 'true');
   soundI.textContent = '♫';
   try { initAudio(); } catch (e) {}
+  const musicHint = document.getElementById('musicHint');
+  const hideMusicHint = () => { musicHint.style.opacity = 0; };
+  // if the browser allowed autoplay, there's nothing to ask for
+  setTimeout(() => { if (audio && audio.ctx.state === 'running') hideMusicHint(); }, 400);
   const unlock = () => {
+    hideMusicHint();
     try { initAudio(); if (audio.ctx.state === 'suspended') audio.ctx.resume(); } catch (e) {}
     for (const ev of ['pointerdown', 'keydown', 'touchend']) removeEventListener(ev, unlock, true);
   };
