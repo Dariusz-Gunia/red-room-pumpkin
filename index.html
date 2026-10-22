@@ -140,8 +140,8 @@
   </g>
 
   <g id="hint" style="transition:opacity .6s;pointer-events:none">
-    <rect class="pulse" x="100" y="452" width="200" height="36" rx="18" fill="#000" fill-opacity=".85" stroke="#e8453c" stroke-width="2"/>
-    <text x="200" y="476" style="fill:#fff;font-size:17px;font-weight:bold;letter-spacing:.1em;text-anchor:middle;text-transform:uppercase">Click the pumpkin</text>
+    <rect id="hintBox" class="pulse" x="70" y="452" width="260" height="36" rx="18" fill="#000" fill-opacity=".85" stroke="#e8453c" stroke-width="2"/>
+    <text id="hintText" x="200" y="476" style="fill:#fff;font-size:17px;font-weight:bold;letter-spacing:.1em;text-anchor:middle;text-transform:uppercase">Click the pumpkin</text>
   </g>
   <g id="sound" role="button" tabindex="0" aria-label="Toggle humming sound" aria-pressed="false">
     <circle cx="372" cy="28" r="18" fill="#000" opacity=".5"/>
@@ -169,6 +169,20 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let lit = true, level = 1, soundOn = false, audio = null;
+
+  /* size the hint pill to its text, whatever font the visitor's system uses */
+  function fitHint() {
+    try {
+      const b = document.getElementById('hintText').getBBox(), box = document.getElementById('hintBox');
+      if (!b.width) return;
+      const w = Math.min(380, b.width + 40);
+      box.setAttribute('width', w);
+      box.setAttribute('x', 200 - w / 2);
+    } catch (e) {}
+  }
+  fitHint();
+  addEventListener('load', fitHint);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHint);
 
   /* ---- candle flicker ---- */
   let t = 0;
