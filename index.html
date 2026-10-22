@@ -17,6 +17,9 @@
   #flash { fill: #ff2a2a; font-size: 17px; font-weight: bold; letter-spacing: .08em; text-anchor: middle; opacity: 0; pointer-events: none; }
   #sound { cursor: pointer; }
   #sound text { fill: #f3d9a4; font-size: 18px; text-anchor: middle; }
+  .pulse { animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 50% { stroke-opacity: .25; } }
+  @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
   #owl { transition: opacity 1.8s ease 1.2s; }
   #owl.on { opacity: 1; }
   #owl:not(.on) { transition-delay: 0s; transition-duration: .3s; }
@@ -136,7 +139,10 @@
     <text id="flash" x="200" y="60">THE OWLS ARE NOT WHAT THEY SEEM</text>
   </g>
 
-  <text id="hint" class="caption" x="200" y="478">Click the pumpkin</text>
+  <g id="hint" style="transition:opacity .6s;pointer-events:none">
+    <rect class="pulse" x="100" y="452" width="200" height="36" rx="18" fill="#000" fill-opacity=".85" stroke="#e8453c" stroke-width="2"/>
+    <text x="200" y="476" style="fill:#fff;font-size:17px;font-weight:bold;letter-spacing:.1em;text-anchor:middle;text-transform:uppercase">Click the pumpkin</text>
+  </g>
   <g id="sound" role="button" tabindex="0" aria-label="Toggle humming sound" aria-pressed="false">
     <circle cx="372" cy="28" r="18" fill="#000" opacity=".5"/>
     <text id="soundIcon" x="372" y="35">&#9835;</text>
