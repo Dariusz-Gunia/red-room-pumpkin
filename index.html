@@ -17,6 +17,12 @@
   #flash { fill: #ff2a2a; font-size: 17px; font-weight: bold; letter-spacing: .08em; text-anchor: middle; opacity: 0; pointer-events: none; }
   #sound { cursor: pointer; }
   #sound text { fill: #f3d9a4; font-size: 18px; text-anchor: middle; }
+  #owl { transition: opacity 1.8s ease 1.2s; }
+  #owl.on { opacity: 1; }
+  #owl:not(.on) { transition-delay: 0s; transition-duration: .3s; }
+  .blink { transform-box: fill-box; transform-origin: center; animation: blink 6s infinite; }
+  @keyframes blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.05); } }
+  @media (prefers-reduced-motion: reduce) { .blink { animation: none; } }
   .glitch #scene { animation: glitch .45s steps(2, end); }
   .glitch #flash { opacity: 1; }
   .glitch #redshift { opacity: .55; }
@@ -118,6 +124,15 @@
 
     <rect id="dark" width="400" height="500" fill="#000" opacity="0"/>
     <rect id="redshift" width="400" height="500" fill="#ff0000"/>
+    <!-- what watches from the dark -->
+    <g id="owl" opacity="0" style="pointer-events:none">
+      <g class="blink">
+        <circle cx="158" cy="120" r="17" fill="#e8e2c0"/><circle cx="242" cy="120" r="17" fill="#e8e2c0"/>
+        <circle id="owlPL" cx="158" cy="120" r="7" fill="#050000"/><circle id="owlPR" cx="242" cy="120" r="7" fill="#050000"/>
+      </g>
+      <polygon points="200,128 192,146 208,146" fill="#e8e2c0"/>
+      <text class="caption" x="200" y="230" style="fill:#c33">I'll see you again in 25 years</text>
+    </g>
     <text id="flash" x="200" y="60">THE OWLS ARE NOT WHAT THEY SEEM</text>
   </g>
 
@@ -135,6 +150,8 @@
   const pump   = document.getElementById('pumpkin');
   const glow   = document.getElementById('glow');
   const halo   = document.getElementById('halo');
+  const owl    = document.getElementById('owl');
+  const owlP   = [document.getElementById('owlPL'), document.getElementById('owlPR')];
   const dark   = document.getElementById('dark');
   const hint   = document.getElementById('hint');
   const soundB = document.getElementById('sound');
@@ -160,7 +177,8 @@
 
   function setLit(v) {
     lit = v;
-    dark.style.opacity = lit ? 0 : 0.6;
+    dark.style.opacity = lit ? 0 : 0.85;
+    owl.classList.toggle('on', !lit);
     pump.setAttribute('aria-pressed', String(lit));
     hint.style.opacity = 0;
     if (audio) audio.gain.gain.setTargetAtTime(soundOn && lit ? VOL : 0, audio.ctx.currentTime, 0.3);
@@ -177,6 +195,11 @@
     const ox = r.left + (r.width  - 400 * scale) / 2;
     const oy = r.top  + (r.height - 500 * scale) / 2;
     const x = (clientX - ox) / scale, y = (clientY - oy) / scale;
+    owlP.forEach((el, i) => {
+      const cx = i ? 242 : 158, dx = x - cx, dy = y - 120, d = Math.hypot(dx, dy) || 1, m = Math.min(7, d / 20);
+      el.setAttribute('cx', cx + dx / d * m);
+      el.setAttribute('cy', 120 + dy / d * m);
+    });
     for (const p of pupils) {
       const dx = x - p.cx, dy = y - p.cy;
       const d = Math.hypot(dx, dy) || 1;
